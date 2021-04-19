@@ -3,7 +3,7 @@ const h : number = window.innerHeight
 const parts : number = 3 
 const scGap : number = 0.02 / parts 
 const strokeFactor : number = 90 
-const dealy : number = 20 
+const delay : number = 20 
 const colors : Array<string> = [
     "#f44336",
     "#673AB7",
@@ -47,11 +47,14 @@ class DrawingUtil {
         const sf3 : number = ScaleUtil.divideScale(sf, 2, parts)
         context.save()
         context.translate(w / 2, h / 2)
-        context.rotate(rot * sf1)
+        
         for (var j = 0; j < 2; j++) {
-            DrawingUtil.drawLine(context, 0, 0, 0, -size * sf2)
+            context.save()
+            context.rotate(rot * sf2 * (1 - 2 * j))
+            DrawingUtil.drawLine(context, 0, 0, 0, -(1 - 2 * j) * size * sf1)
+            context.restore()
         }
-        context.fillRect(0, 0, size, -size * sf3)
+        context.fillRect(0, -size * sf3, size, size * sf3)
         context.restore()
     }
 
@@ -129,8 +132,8 @@ class Animator {
 
     start(cb : Function) {
         if (!this.animated) {
-            this.animated = false 
-            clearInterval(this.interval)
+            this.animated = true 
+            this.interval = setInterval(cb, delay)
         }
     }
 
@@ -223,6 +226,7 @@ class Renderer {
                 cb()
                 this.ltrr.update(() => {
                     this.animator.stop()
+                    cb()
                 })
             })
         })
