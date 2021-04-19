@@ -203,3 +203,24 @@ class LineToRotateRect {
         this.curr.startUpdating(cb)
     }
 }
+
+class Renderer {
+
+    ltrr : LineToRotateRect = new LineToRotateRect()
+    animator : Animator = new Animator()
+
+    draw(context : CanvasRenderingContext2D) {
+        this.ltrr.draw(context)
+    }
+
+    handleTap(cb : Function) {
+        this.ltrr.startUpdating(() => {
+            this.animator.start(() => {
+                cb()
+                this.ltrr.update(() => {
+                    this.animator.stop()
+                })
+            })
+        })
+    }
+}
